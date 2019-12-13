@@ -1,5 +1,0 @@
-abibas1,5,42,red,abibas,winter
-abibas1,4,41,red,abibas,winter
-abibas2,2,42,blue,abibas,summer
-abibas2,9,39,black,abibas,summer
-nike1,3,39,black,nike,summer
