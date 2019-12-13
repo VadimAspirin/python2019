@@ -1,3 +1,4 @@
+import os
 import json
 from Product import Product, ProductCreator
 
@@ -11,23 +12,6 @@ class Products:
             if str(self.products[i].params['sku']) == str(sku):
                 return i
         return None
-
-    # def increment(self, sku):
-    #     current_prod = self.search(sku)
-    #     if current_prod is not None:
-    #         self.products[current_prod].params['quantity'] += 1
-    #     else:
-    #         raise ValueError("product not found")
-
-    # def decrement(self, sku):
-    #     current_prod = self.search(sku)
-    #     if current_prod is not None:
-    #         if self.products[current_prod].params['quantity'] != 0:
-    #             self.products[current_prod].params['quantity'] -= 1
-    #         else:
-    #             raise ValueError("product quantity is zero")
-    #     else:
-    #         raise ValueError("product not found")
 
     def add(self, product):
         assert isinstance(product, Product), "product is not type Product"
@@ -82,6 +66,9 @@ class Products:
         return stat
 
     def import_from_json(self, path):
+        if not os.path.isfile(path):
+            return
+
         data = []
         with open(path, 'r') as fp:
             data = json.load(fp)
@@ -92,6 +79,9 @@ class Products:
             self.products.append(product)
 
     def export_to_json(self, path):
+        if not self.products:
+            return
+
         data = []
         for p in self.products:
             data.append({"type": p.type_name, 
