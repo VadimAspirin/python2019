@@ -10,8 +10,8 @@ DATA_JSON_PATH = os.path.join(CURRENT_FILE_DIR, 'test.json')
 sys.path.append(SRC_DIR)
 
 
-from Products import Products
-from Product import TshirtProduct
+from Catalog import Catalog
+from Product import TshirtProduct, SneakersProduct
 
 sku=1
 name="noname1"
@@ -22,36 +22,51 @@ color="red"
 size="M"
 
 
+def test_parser():
+    tshirt = TshirtProduct("1", "name1", 42, 2, "noname", "blue", "S")
+    sneakers = SneakersProduct("2", "nike-mew", 777.45, 12, "nike", "black", 41)
+    catalog = Catalog()
+    catalog.add(tshirt)
+    catalog.add(sneakers)
+    catalog.export_to_json(DATA_JSON_PATH)
+
+    new_catalog = Catalog()
+    new_catalog.import_from_json(DATA_JSON_PATH)
+
+    assert type(new_catalog[tshirt.sku]).__name__ == 'TshirtProduct'
+    assert type(new_catalog[sneakers.sku]).__name__ == 'SneakersProduct'
+
+
 def test_export_import_products():
     product = TshirtProduct(sku, name, price, quantity, brand, color, size)
-    products = Products()
-    products.add(product)
-    products.export_to_json(DATA_JSON_PATH)
+    catalog = Catalog()
+    catalog.add(product)
+    catalog.export_to_json(DATA_JSON_PATH)
 
-    new_products = Products()
-    new_products.import_from_json(DATA_JSON_PATH)
+    new_catalog = Catalog()
+    new_catalog.import_from_json(DATA_JSON_PATH)
 
-    assert new_products.products[0].params['sku'] == products.products[0].params['sku'] == sku
-    assert new_products.products[0].params['name'] == products.products[0].params['name'] == name
-    assert new_products.products[0].params['price'] == products.products[0].params['price'] == price
-    assert new_products.products[0].params['quantity'] == products.products[0].params['quantity'] == quantity
-    assert new_products.products[0].params['brand'] == products.products[0].params['brand'] == brand
-    assert new_products.products[0].params['color'] == products.products[0].params['color'] == color
-    assert new_products.products[0].params['size'] == products.products[0].params['size'] == size
+    assert new_catalog[sku].sku == catalog[sku].sku == sku
+    assert new_catalog[sku].name == catalog[sku].name == name
+    assert new_catalog[sku].price == catalog[sku].price == price
+    assert new_catalog[sku].quantity == catalog[sku].quantity == quantity
+    assert new_catalog[sku].brand == catalog[sku].brand == brand
+    assert new_catalog[sku].color == catalog[sku].color == color
+    assert new_catalog[sku].size == catalog[sku].size == size
 
 
 def test_add_product():
     product = TshirtProduct(sku, name, price, quantity, brand, color, size)
-    products = Products()
-    products.add(product)
+    catalog = Catalog()
+    catalog.add(product)
 
-    assert products.products[0].params['sku'] == sku
-    assert products.products[0].params['name'] == name
-    assert products.products[0].params['price'] == price
-    assert products.products[0].params['quantity'] == quantity
-    assert products.products[0].params['brand'] == brand
-    assert products.products[0].params['color'] == color
-    assert products.products[0].params['size'] == size
+    assert catalog[sku].sku == sku
+    assert catalog[sku].name == name
+    assert catalog[sku].price == price
+    assert catalog[sku].quantity == quantity
+    assert catalog[sku].brand == brand
+    assert catalog[sku].color == color
+    assert catalog[sku].size == size
 
 
 def test_empty_product():
@@ -66,9 +81,9 @@ def test_empty_product():
 
 
 def test_update_product():
-    products = Products()
+    catalog = Catalog()
     product = TshirtProduct(sku, name, price, quantity, brand, color, size)
-    products.add(product)
+    catalog.add(product)
 
     new_name="noname2"
     new_price=46
@@ -78,38 +93,38 @@ def test_update_product():
     new_size="S"
 
     product = TshirtProduct(sku, new_name, new_price, new_quantity, new_brand, new_color, new_size)
-    products.add(product)
+    catalog.add(product)
 
-    assert products.products[0].params['sku'] == sku
-    assert products.products[0].params['name'] == new_name
-    assert products.products[0].params['price'] == new_price
-    assert products.products[0].params['quantity'] == new_quantity
-    assert products.products[0].params['brand'] == new_brand
-    assert products.products[0].params['color'] == new_color
-    assert products.products[0].params['size'] == new_size
+    assert catalog[sku].sku == sku
+    assert catalog[sku].name == new_name
+    assert catalog[sku].price == new_price
+    assert catalog[sku].quantity == new_quantity
+    assert catalog[sku].brand == new_brand
+    assert catalog[sku].color == new_color
+    assert catalog[sku].size == new_size
 
 
 def test_delete_product():
-    products = Products()
+    catalog = Catalog()
     product = TshirtProduct(sku, name, price, quantity, brand, color, size)
-    products.add(product)
-    assert len(products.products) == 1
+    catalog.add(product)
+    assert len(catalog.products) == 1
 
-    products.drop(sku)
-    assert len(products.products) == 0
+    catalog.drop(sku)
+    assert len(catalog.products) == 0
 
 
 def test_stat_size_product():
-    products = Products()
-    products.add(TshirtProduct(sku, name, price, quantity, brand, color, "L"))
-    products.add(TshirtProduct(sku+1, name, price, quantity, brand, color, "S"))
-    products.add(TshirtProduct(sku+2, name, price, quantity, brand, color, "S"))
-    products.add(TshirtProduct(sku+3, name, price, quantity, brand, color, "M"))
-    products.add(TshirtProduct(sku+4, name, price, quantity, brand, color, "M"))
-    products.add(TshirtProduct(sku+5, name, price, quantity, brand, color, "M"))
-    products.add(TshirtProduct(sku+6, name, price, quantity, brand, color, "XXXL"))
+    catalog = Catalog()
+    catalog.add(TshirtProduct(sku, name, price, quantity, brand, color, "L"))
+    catalog.add(TshirtProduct(sku+1, name, price, quantity, brand, color, "S"))
+    catalog.add(TshirtProduct(sku+2, name, price, quantity, brand, color, "S"))
+    catalog.add(TshirtProduct(sku+3, name, price, quantity, brand, color, "M"))
+    catalog.add(TshirtProduct(sku+4, name, price, quantity, brand, color, "M"))
+    catalog.add(TshirtProduct(sku+5, name, price, quantity, brand, color, "M"))
+    catalog.add(TshirtProduct(sku+6, name, price, quantity, brand, color, "XXXL"))
 
-    stat_size = products._collect_stat("size")
+    stat_size = catalog.stat_collect("size")
     assert stat_size["L"] == 1
     assert stat_size["S"] == 2
     assert stat_size["M"] == 3

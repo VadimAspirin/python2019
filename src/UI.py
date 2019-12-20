@@ -1,6 +1,7 @@
 class InputForm:
-    def __init__(self, message):
+    def __init__(self, message, empty_string=False):
         self.message = message
+        self.empty_string = empty_string
         self.items = []
 
     def addItem(self, mess):
@@ -11,7 +12,7 @@ class InputForm:
         print(f"\n{self.message}")
         for i in self.items:
             out = input(f"{i} > ")
-            if not out:
+            if not out and not self.empty_string:
                 raise ValueError("input error")
             out_params.append(out)
         return out_params
@@ -46,12 +47,8 @@ class Menu:
             self.print()
             try:
                 option_num = int(input("> "))
-                try:
-                    out = self.selectItem(option_num)
-                    if out == 0:
-                        break
-                except IndexError as e:
-                    print(f"\nWarning: try again: {str(e)}")
-            except ValueError as e:
+                out = self.selectItem(option_num)
+                if out == 0:
+                    break
+            except Exception as e:
                 print(f"\nWarning: try again: {str(e)}")
-

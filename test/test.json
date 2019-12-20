@@ -1,1 +1,1 @@
-[{"type": "Tshirt", "params": {"sku": 1, "name": "noname1", "price": 42.0, "quantity": 2, "brand": "noname", "color": "red", "size": "M"}}]
+[{"type": "TshirtProduct", "params": {"sku": 1, "name": "noname1", "price": 42.0, "quantity": 2, "brand": "noname", "color": "red", "size": "M"}}]

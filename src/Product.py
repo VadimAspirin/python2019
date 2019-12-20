@@ -18,6 +18,12 @@ class Product:
             if not v:
                 raise ValueError(f"{k} is empty")
 
+    def __getitem__(self, item):
+         return self.params[item]
+
+    def __getattr__(self, item):
+        return self.params[item]
+
     def __str__(self):
         out = ""
         for k, v in self.params.items():
@@ -36,13 +42,17 @@ class TshirtProduct(Product):
             if not v:
                 raise ValueError(f"{k} is empty")
 
+        sizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL']
+        if self.params['size'] not in sizes:
+            raise ValueError(f"size is not: {sizes}")
+
 
 class SneakersProduct(Product):
     def __init__(self, sku, name, price, quantity, brand, color, size):
         super(SneakersProduct, self).__init__(sku, name, price, quantity, brand)
         self.type_name = "Sneakers"
         self.params['color'] = color
-        self.params['size'] = size
+        self.params['size'] = int(size)
 
         for k, v in self.params.items():
             if not v:
@@ -50,12 +60,6 @@ class SneakersProduct(Product):
 
 
 class ProductCreator:
-
-    products = {
-        'Tshirt': TshirtProduct,
-        'Sneakers': SneakersProduct
-    }
-
     @staticmethod
-    def pull(type, params):
-        return ProductCreator.products[type](**params)
+    def pull(p_type, params):
+        return eval(f'{p_type}(**params)')
