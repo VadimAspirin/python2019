@@ -1,6 +1,7 @@
 class Product:
+    type_name = "Product"
+
     def __init__(self, sku, name, price, quantity, brand):
-        self.type_name = "Product"
         self.params = {}
         self.params['sku'] = sku
         self.params['name'] = name
@@ -8,15 +9,15 @@ class Product:
         self.params['quantity'] = int(quantity)
         self.params['brand'] = brand
 
+        for k, v in self.params.items():
+            if not v:
+                raise ValueError(f"{k} is empty")
+
         if self.params['price'] < 0:
             raise ValueError("price < 0")
 
         if self.params['quantity'] < 0:
             raise ValueError("quantity < 0")
-
-        for k, v in self.params.items():
-            if not v:
-                raise ValueError(f"{k} is empty")
 
     def __getitem__(self, item):
          return self.params[item]
@@ -32,9 +33,10 @@ class Product:
 
 
 class TshirtProduct(Product):
+    type_name = "Tshirt"
+
     def __init__(self, sku, name, price, quantity, brand, color, size):
         super(TshirtProduct, self).__init__(sku, name, price, quantity, brand)
-        self.type_name = "Tshirt"
         self.params['color'] = color
         self.params['size'] = size
 
@@ -48,9 +50,10 @@ class TshirtProduct(Product):
 
 
 class SneakersProduct(Product):
+    type_name = "Sneakers"
+
     def __init__(self, sku, name, price, quantity, brand, color, size):
         super(SneakersProduct, self).__init__(sku, name, price, quantity, brand)
-        self.type_name = "Sneakers"
         self.params['color'] = color
         self.params['size'] = int(size)
 
@@ -63,3 +66,10 @@ class ProductCreator:
     @staticmethod
     def pull(p_type, params):
         return eval(f'{p_type}(**params)')
+
+
+class Products:
+    @staticmethod
+    def list():
+        return [TshirtProduct,
+                SneakersProduct]

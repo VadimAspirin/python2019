@@ -2,6 +2,7 @@ import os
 import json
 from Product import Product, ProductCreator
 
+
 class Catalog:
     def __init__(self):
         self.products = {}
@@ -31,7 +32,7 @@ class Catalog:
     def to_string(self, sku):
         if sku not in self.products:
             raise ValueError("product not found")
-        out = f"type: {self.products[sku].type_name}\n"
+        out = f"type: {type(self.products[sku]).type_name}\n"
         out += self.products[sku].__str__()
         return out
 
@@ -42,12 +43,9 @@ class Catalog:
             for j in kwargs:
                 if not hasattr(self.products[i], j):
                     break
-                if kwargs[j] == "":
-                    f += 1
                 elif str(f"{eval(f'self.products[i].{j}')}") != kwargs[j]:
                     break
-                else:
-                    f +=1
+                f += 1
             if f == len(kwargs):
                 ids.append(i)
         return ids
