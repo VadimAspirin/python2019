@@ -84,27 +84,37 @@ class Catalog:
             out += f"{name}: {count}\n"
         return out
 
-    def export_to_json(self, path):
-        if not self.products:
+
+class CatlogFileLoader:
+
+    def __init__(self, path):
+        self.path = path
+
+    def input(self, catalog):
+        assert isinstance(catalog, Catalog)
+
+        if not os.path.isfile(self.path):
             return
 
         data = []
-        for _, p in self.products.items():
+        with open(self.path, 'r') as fp:
+            data = json.load(fp)
+
+        catalog.products = {}
+        for p in data:
+            product = ProductCreator.pull(p['type'], p['params'])
+            catalog.products[product.params['sku']] = product
+
+    def output(self, catalog):
+        assert isinstance(catalog, Catalog)
+
+        if not catalog.products:
+            return
+
+        data = []
+        for _, p in catalog.products.items():
             data.append({"type": type(p).__name__, 
                          "params": p.params})
 
-        with open(path, 'w') as fp:
+        with open(self.path, 'w') as fp:
             json.dump(data, fp)
-
-    def import_from_json(self, path):
-        if not os.path.isfile(path):
-            return
-
-        data = []
-        with open(path, 'r') as fp:
-            data = json.load(fp)
-
-        self.products = {}
-        for p in data:
-            product = ProductCreator.pull(p['type'], p['params'])
-            self.products[product.params['sku']] = product

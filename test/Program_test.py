@@ -10,7 +10,7 @@ DATA_JSON_PATH = os.path.join(CURRENT_FILE_DIR, 'test.json')
 sys.path.append(SRC_DIR)
 
 
-from Catalog import Catalog
+from Catalog import Catalog, CatlogFileLoader
 from Product import TshirtProduct, SneakersProduct
 
 sku=1
@@ -28,10 +28,10 @@ def test_parser():
     catalog = Catalog()
     catalog.add(tshirt)
     catalog.add(sneakers)
-    catalog.export_to_json(DATA_JSON_PATH)
+    CatlogFileLoader(DATA_JSON_PATH).output(catalog)
 
     new_catalog = Catalog()
-    new_catalog.import_from_json(DATA_JSON_PATH)
+    CatlogFileLoader(DATA_JSON_PATH).input(new_catalog)
 
     assert type(new_catalog[tshirt.sku]).__name__ == 'TshirtProduct'
     assert type(new_catalog[sneakers.sku]).__name__ == 'SneakersProduct'
@@ -41,10 +41,10 @@ def test_export_import_products():
     product = TshirtProduct(sku, name, price, quantity, brand, color, size)
     catalog = Catalog()
     catalog.add(product)
-    catalog.export_to_json(DATA_JSON_PATH)
+    CatlogFileLoader(DATA_JSON_PATH).output(catalog)
 
     new_catalog = Catalog()
-    new_catalog.import_from_json(DATA_JSON_PATH)
+    CatlogFileLoader(DATA_JSON_PATH).input(new_catalog)
 
     assert new_catalog[sku].sku == catalog[sku].sku == sku
     assert new_catalog[sku].name == catalog[sku].name == name

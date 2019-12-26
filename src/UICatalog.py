@@ -1,5 +1,5 @@
 import inspect
-from Catalog import Catalog
+from Catalog import Catalog, CatlogFileLoader
 from Product import Products
 from UI import InputForm, Menu
 
@@ -77,7 +77,7 @@ class UICatalog:
         filter_product_menu.generate()
 
     def generate(self):
-        self.catalog.import_from_json(self.data_json_path)
+        CatlogFileLoader(self.data_json_path).input(self.catalog)
 
         main_menu = Menu("Select menu item:")
         main_menu.addItem("add product", self.addProduct)
@@ -89,4 +89,4 @@ class UICatalog:
         main_menu.generate()
 
         print('\nBye!')
-        self.catalog.export_to_json(self.data_json_path)
+        CatlogFileLoader(self.data_json_path).output(self.catalog)
